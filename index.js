@@ -3,12 +3,6 @@ const app = express();
 const bodyparser = require('body-parser');
 
 // route middlewares comprobacion de que esta bien el servidor
-/*app.get('/', (req, res) => {
-    res.json({
-        estado: true,
-        mensaje: 'funciona!'
-    })
-});*/
 
 // cors
 const cors = require('cors');
@@ -32,7 +26,14 @@ const url = `mongodb://veterinaria-mascotas:${process.env.PASSWORD}@cluster0-sha
 mongoose.connect(url, {useNewUrlParser: true, useUnifiedTopology: true
 })
 .then(()=>console.log('Base de datos conectada'))
-.catch(e=>console.log(e))
+.catch(e=>console.log(e));
+
+app.get('/', (req, res) => {
+    res.json({
+        estado: true,
+        mensaje: 'funciona!'
+    })
+});
 
 // import routes
 const authRoutes = require('./routes/rutas');
