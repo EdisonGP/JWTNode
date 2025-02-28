@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Autenticación</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Variables CSS para facilitar la consistencia de colores y la reutilización */
+        :root {
+            --primary-color: #4e73df;         /* Color principal - azul */
+            --secondary-color: #224abe;       /* Color secundario - azul oscuro */
+            --success-color: #1cc88a;         /* Color de éxito - verde */
+            --error-color: #e74a3b;           /* Color de error - rojo */
+            --dark-color: #5a5c69;            /* Color oscuro para textos */
+            --light-color: #f8f9fc;           /* Color claro para fondos */
+        }
+        
+        /* Reseteo de los estilos */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Contenedor principal que alberga ambos formularios */
+        .container {
+            position: relative;
+            width: 800px;
+            height: 500px;
+            margin: 20px;
+        }
+        
+        .form-container {
+            position: absolute;
+            top: 0;
+            width: 60%;
+            height: 100%;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.6s ease-in-out;
+            padding: 40px;
+            z-index: 10;
+        }
+        
+        /* Posicionamiento inicial del contenedor de login */
+        .login-container {
+            left: 0;
+            z-index: 2;
+        }
+        
+        /* Posicionamiento inicial del contenedor de registro */
+        .register-container {
+            right: 0;
+            opacity: 0;
+            z-index: 1;
+        }
+        
+        /*Movimiento del login */
+        .container.active .login-container {
+            transform: translateX(66.6%);
+            opacity: 0;
+            z-index: 1;
+        }
+        
+        /* Movimiento del register*/
+        .container.active .register-container {
+            transform: translateX(0%);
+            opacity: 1;
+            z-index: 5;
+        }
+        
+        /* Contenedor del panel deslizante*/
+        .overlay-container {
+            position: absolute;
+            top: 0;
+            left: 60%;
+            width: 40%;
+            height: 100%;
+            overflow: hidden;
+            transition: transform 0.6s ease-in-out;
+            z-index: 5;
+            border-radius: 10px;
+        }
+        
+        /* Transformación del contenedor de overlay cuando está activo */
+        .container.active .overlay-container {
+            transform: translateX(-150%);
+        }
+        
+        .overlay {
+            position: relative;
+            color: white;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            left: -100%;
+            height: 100%;
+            width: 200%;
+            transform: translateX(0);
+            transition: transform 0.6s ease-in-out;
+            display: flex;
+        }
+        
+        /* Transformación del overlay cuando el contenedor está activo */
+        .container.active .overlay {
+            transform: translateX(50%);
+        }
+        
+        .overlay-panel {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 0 40px;
+            text-align: center;
+            top: 0;
+            height: 100%;
+            width: 50%;
+            transform: translateX(0);
+            transition: transform 0.6s ease-in-out;
+        }
+        
+        /* Panel izquierdo del overlay */
+        .overlay-left {
+            transform: translateX(-20%);
+        }
+        
+        /* Panel derecho del overlay */
+        .overlay-right {
+            right: 0;
+            transform: translateX(0);
+        }
+        
+        /* Transformación del panel izquierdo cuando está activo */
+        .container.active .overlay-left {
+            transform: translateX(0);
+        }
+        
+        /* Transformación del panel derecho cuando está activo */
+        .container.active .overlay-right {
+            transform: translateX(20%);
+        }
+        
+        /* Estilo de los títulos h1 */
+        h1 {
+            margin-bottom: 30px;
+            font-weight: 700;
+            color: var(--dark-color);
+        }
+        
+        /* Color del título en el overlay */
+        .overlay-panel h1 {
+            color: white;
+        }
+        
+        /* Estilo de los formularios */
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Grupo de elementos de formulario */
+        .form-group {
+            position: relative;
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        /* Estilo de los inputs */
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            outline: none;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        /* Estilo de input al enfocar */
+        input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px rgba(78, 115, 223, 0.2);
+        }
+        
+        /* Iconos dentro de los inputs */
+        .input-icon {
+            position: absolute;
+            top: 22px;
+            right: 10px;
+            color: var(--dark-color);
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 12px 45px;
+            margin: 20px 0;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+  
+        button:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        button:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        button:focus {
+            outline: none;
+        }
+        
+        /* Botones (transparentes) en el overlay */
+        button.ghost {
+            background-color: transparent;
+            border: 2px solid white;
+            color: white;
+        }
+        
+        /* Hover de botones ghost */
+        button.ghost:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Estilos para las alertas */
+        .alert {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-align: center;
+            display: none;
+        }
+        
+        /* Alerta de error */
+        .alert-error {
+            background-color: rgba(231, 74, 59, 0.1);
+            color: var(--error-color);
+            border: 1px solid var(--error-color);
+        }
+        
+        /* Alerta de éxito */
+        .alert-success {
+            background-color: rgba(28, 200, 138, 0.1);
+            color: var(--success-color);
+            border: 1px solid var(--success-color);
+        }
+        
+        /* Indicador de carga */
+        .loading {
+            display: none;
+            width: 24px;
+            height: 24px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+        }
+        
+        /* Animación de giro para el indicador de carga */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Contenedor de iconos de redes sociales */
+        .social-container {
+            margin: 20px 0;
+        }
+        
+        /* Iconos de redes sociales */
+        .social-container a {
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 5px;
+            height: 40px;
+            width: 40px;
+            text-decoration: none;
+            color: var(--dark-color);
+            transition: all 0.3s ease;
+        }
+        
+        /* Hover de iconos de redes sociales */
+        .social-container a:hover {
+            color: var(--primary-color);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="container">
+        <div class="form-container login-container">
+            <h1>Iniciar Sesión</h1>
+            <div id="login-alert" class="alert alert-error"></div>
+            <form id="login-form">
+                <div class="form-group">
+                    <input type="email" id="login-email" name="email" placeholder="Correo Electrónico" required>
+                    <div class="input-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="login-password" name="password" placeholder="Contraseña" required>
+                    <div class="input-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                </div>
+                <div class="loading" id="login-loading"></div>
+                <button type="submit">Iniciar Sesión</button>
+            </form>
+            <div class="social-container">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-google"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+        
+        <div class="form-container register-container">
+            <h1>Crear Cuenta</h1>
+            <div id="register-alert" class="alert alert-error"></div>
+            <form id="register-form">
+                <div class="form-group">
+                    <input type="text" id="register-name" name="name" placeholder="Nombre Completo" required>
+                    <div class="input-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="email" id="register-email" name="email" placeholder="Correo Electrónico" required>
+                    <div class="input-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="register-password" name="password" placeholder="Contraseña" required>
+                    <div class="input-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                </div>
+                <div class="loading" id="register-loading"></div>
+                <button type="submit">Registrarme</button>
+            </form>
+            <div class="social-container">
+                <a href="#"><i class="fab fa-facebook-f"></i></a>
+                <a href="#"><i class="fab fa-google"></i></a>
+                <a href="#"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+        
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>¡Bienvenido de vuelta!</h1>
+                    <p>Para mantenerte conectado con nosotros, por favor inicia sesión con tus datos personales</p>
+                    <button class="ghost" id="login">Iniciar Sesión</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>¡Hola!</h1>
+                    <p>Ingresa tus datos personales y comienza tu viaje con nosotros</p>
+                    <button class="ghost" id="register">Registrarme</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // ==== SISTEMA DE CAMBIO DE PANEL ====
+            // Obtenemos referencias a los elementos del DOM
+            const container = document.getElementById('container');
+            const registerBtn = document.getElementById('register');
+            const loginBtn = document.getElementById('login');
+            
+            // Añadimos listener para el botón de registro
+            // Al hacer clic, añade la clase 'active' que activa la animación
+            registerBtn.addEventListener('click', () => {
+                container.classList.add('active');
+            });
+            
+            // Añadimos listener para el botón de login
+            // Al hacer clic, remueve la clase 'active' para volver al estado inicial
+            loginBtn.addEventListener('click', () => {
+                container.classList.remove('active');
+            });
+            
+            // ==== MANEJO DEL FORMULARIO DE LOGIN ====
+            const loginForm = document.getElementById('login-form');
+            const loginAlert = document.getElementById('login-alert');
+            const loginLoading = document.getElementById('login-loading');
+            
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();    // Prevenimos el envío normal del formulario
+                loginAlert.style.display = 'none';  // Ocultamos alertas previas
+                loginLoading.style.display = 'block';
+                
+                // Obtenemos los valores del formulario
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+                
+                // Realizamos la petición al servidor
+                fetch('http://localhost:3001/api/user/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    loginLoading.style.display = 'none';
+                    
+                    if (data.error) {
+                        loginAlert.textContent = data.message || 'Error en la autenticación';
+                        loginAlert.style.display = 'block';
+                    } else {
+                        localStorage.setItem('auth-token', data.data.token); //Almacena el token
+                        localStorage.setItem('user-name', data.data.name);
+                        
+                        // Ahora hacemos un fetch a /api/admin con el token para acceder al panel del administrador
+                        fetch("http://localhost:3001/api/admin", {
+                        method: "GET",
+                        headers: {
+                            "auth-token": localStorage.getItem("auth-token"),
+                        },
+                    })
+                        .then(response => response.text())  // Espera texto (HTML)
+                        .then(html => {
+                            document.body.innerHTML = html;  // Reemplaza el contenido de la página con el dashboard
+                        })
+                        .catch(error => {
+                            console.error('Error en acceso a admin:', error);
+                            loginAlert.textContent = 'No tienes acceso a esta sección.';
+                            loginAlert.style.display = 'block';
+                        });
+                    }
+                })
+                .catch(error => {
+                    // Si hay error en la petición
+                    loginLoading.style.display = 'none';
+                    
+                    // Mostramos un mensaje de error
+                    loginAlert.textContent = 'Error de conexión. Intente nuevamente.';
+                    loginAlert.style.display = 'block';
+                    console.error('Error:', error);
+                });
+            });
+            
+            // ==== MANEJO DEL FORMULARIO DE REGISTRO ====
+            const registerForm = document.getElementById('register-form');
+            const registerAlert = document.getElementById('register-alert');
+            const registerLoading = document.getElementById('register-loading');
+            
+            registerForm.addEventListener('submit', function(e) {
+                e.preventDefault();  // Prevenimos el envío normal del formulario
+                registerAlert.style.display = 'none';
+                registerLoading.style.display = 'block';
+                
+                // Obtenemos los valores del formulario
+                const name = document.getElementById('register-name').value;
+                const email = document.getElementById('register-email').value;
+                const password = document.getElementById('register-password').value;
+                
+                // Realizamos la petición al servidor mediante fetch API
+                fetch('http://localhost:3001/api/user/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name, email, password })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    registerLoading.style.display = 'none';
+                    
+                    if (data.error) {
+                        // Si hay error, mostramos el mensaje
+                        registerAlert.textContent = data.message || 'Error en el registro';
+                        registerAlert.style.display = 'block';
+                    } else {
+                        // Si es exitoso, mostramos mensaje y cambiamos a login
+                        registerAlert.textContent = 'Registro exitoso. Ahora puedes iniciar sesión.';
+                        registerAlert.className = 'alert alert-success';
+                        registerAlert.style.display = 'block';
+                        
+                        registerForm.reset(); // Limpiamos el formulario
+                        
+                        // Cambiamos al panel de login después de un tiempo
+                        setTimeout(() => {
+                            container.classList.remove('active');
+                        }, 1000);
+                    }
+                })
+                .catch(error => {
+                    // Si hay error en la petición
+                    registerLoading.style.display = 'none';
+                    
+                    // Mostramos un mensaje de error
+                    registerAlert.textContent = 'Error de conexión. Intente nuevamente.';
+                    registerAlert.style.display = 'block';
+                    console.error('Error:', error);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

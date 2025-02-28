@@ -28,11 +28,12 @@ mongoose.connect(url, {useNewUrlParser: true, useUnifiedTopology: true
 .then(()=>console.log('Base de datos conectada'))
 .catch(e=>console.log(e));
 
+// Motor de plantilla EJS
+app.set("view engine", "ejs");
+app.set("views", __dirname + "/views");
+
 app.get('/', (req, res) => {
-    res.json({
-        estado: true,
-        mensaje: 'funciona!'
-    })
+   res.render("login_register",{});
 });
 
 // import routes

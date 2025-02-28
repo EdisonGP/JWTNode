@@ -1,0 +1,266 @@
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome para iconos -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .navbar-brand {
+            font-weight: 600;
+            color: #3a3a3a;
+        }
+        
+        .main-container {
+            padding: 2rem;
+        }
+        
+        .welcome-card {
+            background-image: url('https://t3.ftcdn.net/jpg/05/23/04/00/360_F_523040057_JYMTxoQGquklUthNLLjspI7ldR1hrFlH.jpg');
+            background-size: cover;
+            background-position: center;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            min-height: 200px;
+        }
+        
+        .welcome-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(41, 53, 86, 0.9) 0%, rgba(91, 94, 166, 0.7) 100%);
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .welcome-text {
+            color: white;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+        
+        .stat-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .img-fluid {
+            border-radius: 10px;
+        }
+        
+        .icon-card {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 1.5rem;
+            text-align: center;
+            height: 100%;
+        }
+        
+        .btn-action {
+            width: 100%;
+            padding: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .footer {
+            margin-top: 2rem;
+            padding: 1rem 0;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container main-container">
+        <!-- Tarjeta de bienvenida con imagen de fondo -->
+        <div class="welcome-card">
+            <div class="welcome-overlay">
+                <div class="welcome-text">
+                    <h2 class="display-6 fw-bold" id="welcomeMessage">
+                        Bienvenido <%= adminName %>
+                      </h2>
+                    <p class="mb-0">Es bueno verte de nuevo. Aquí tienes un resumen de tu sistema.</p>
+                    <p id="prueba"></p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Estadísticas simplificadas -->
+        <div class="row mb-4">
+            <div class="col-md-3 mb-3">
+                <div class="card text-center h-100">
+                    <div class="icon-card">
+                        <div class="card-icon text-primary">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3 class="stat-value">1,246</h3>
+                        <p class="stat-label">Usuarios</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-3">
+                <div class="card text-center h-100">
+                    <div class="icon-card">
+                        <div class="card-icon text-success">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <h3 class="stat-value">524</h3>
+                        <p class="stat-label">Ventas</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-3">
+                <div class="card text-center h-100">
+                    <div class="icon-card">
+                        <div class="card-icon text-warning">
+                            <i class="fas fa-box-open"></i>
+                        </div>
+                        <h3 class="stat-value">85</h3>
+                        <p class="stat-label">Productos</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-3 mb-3">
+                <div class="card text-center h-100">
+                    <div class="icon-card">
+                        <div class="card-icon text-info">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h3 class="stat-value">92</h3>
+                        <p class="stat-label">Mensajes</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Secciones principales -->
+        <div class="row">
+            <!-- Acciones rápidas -->
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">Acciones Rápidas</h5>
+                        <div class="d-grid gap-2 mt-3">
+                            <button class="btn btn-primary btn-action">
+                                <i class="fas fa-plus-circle me-2"></i>Nuevo Usuario
+                            </button>
+                            <button class="btn btn-outline-primary btn-action">
+                                <i class="fas fa-box me-2"></i>Nuevo Producto
+                            </button>
+                            <button class="btn btn-outline-primary btn-action">
+                                <i class="fas fa-chart-line me-2"></i>Ver Reportes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Actividad reciente con imagen -->
+            <div class="col-md-8 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title mb-3">Actividad Reciente</h5>
+                        <div class="row align-items-center">
+                            <div class="col-md-4 mb-3 mb-md-0">
+                                <img src="https://imagenes.eltiempo.com/files/image_1200_535/uploads/2018/03/22/5ab428c6cda71.jpeg" alt="Actividad" class="img-fluid">
+                            </div>
+                            <div class="col-md-8">
+                                <div class="list-group list-group-flush">
+                                    <div class="list-group-item border-0 px-0">
+                                        <div class="d-flex justify-content-between">
+                                            <span><i class="fas fa-user-check text-success me-2"></i> Nuevo usuario registrado</span>
+                                            <small class="text-muted">Hace 10 min</small>
+                                        </div>
+                                    </div>
+                                    <div class="list-group-item border-0 px-0">
+                                        <div class="d-flex justify-content-between">
+                                            <span><i class="fas fa-shopping-bag text-primary me-2"></i> Nueva venta completada</span>
+                                            <small class="text-muted">Hace 25 min</small>
+                                        </div>
+                                    </div>
+                                    <div class="list-group-item border-0 px-0">
+                                        <div class="d-flex justify-content-between">
+                                            <span><i class="fas fa-chart-line text-warning me-2"></i> Reporte generado</span>
+                                            <small class="text-muted">Hace 1 hora</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <a href="#" class="btn btn-sm btn-outline-primary mt-2">Ver todo</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Banner con imagen -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body p-0">
+                        <div class="row g-0">
+                            <div class="col-md-8">
+                                <div class="p-4">
+                                    <h4 class="mb-3">¿Necesitas ayuda?</h4>
+                                    <p>Revisa nuestra documentación para aprender más sobre cómo usar todas las funciones de este panel de administración.</p>
+                                    <a href="#" class="btn btn-outline-primary">Ver documentación</a>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <img src="https://imagenes.eltiempo.com/files/image_1200_535/uploads/2018/03/22/5ab428c6cda71.jpeg" alt="Ayuda" class="img-fluid h-100" style="object-fit: cover; border-top-right-radius: 10px; border-bottom-right-radius: 10px;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

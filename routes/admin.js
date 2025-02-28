@@ -1,13 +1,7 @@
 const router = require('express').Router();
 
-router.get('/', (req, res) => {
-    res.json({
-        error: null,
-        data: {
-            title: 'Bienvenido Administrador',
-            user: req.user
-        }
-    })
-})
+router.get("/", (req, res) => {
+    res.render("dashboard", { adminName: req.user.name });
+});
 
 module.exports = router

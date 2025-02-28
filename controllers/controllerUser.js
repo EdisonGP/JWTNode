@@ -66,8 +66,7 @@ COMPROBACION
     res.header('auth-token', token).json({
         error: null,
         message: 'Bienvenido',
-        data: {token},
-        body:user //Esta linea se podria eliminar
+        data: {token:token, name:user.name},
     })
 };
 
