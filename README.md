@@ -86,29 +86,17 @@ Aquí puedes ver algunas imágenes de la interfaz de la aplicación:
    git clone https://github.com/EdisonGP/JWTNode.git
    cd tu-repositorio
    ```
-2. Navega al directorio del proyecto:
-
-    ```bash
-    cd TU_REPOSITORIO
-    ```
-
-3. Inicia un repositorio Git (solo si es la primera vez que clonas el proyecto):
-
-    ```bash
-    git init
-    ```
-
-4. Instala las dependencias necesarias utilizando **npm**:
+2. Instala las dependencias necesarias utilizando **npm**:
 
     ```bash
     npm install
     ```
-
-5. Finalmente, ejecuta la aplicación:
+3. Finalmente, ejecuta la aplicación:
 
     ```bash
     npm start
     ```
+    
 ## Licencia
 
 Este proyecto está licenciado bajo la **MIT License** - consulta el archivo [LICENSE](LICENSE) para más detalles.
